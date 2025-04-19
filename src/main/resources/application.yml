@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mysql_local
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  batch:
+    jdbc:
+      initialize-schema: never
+    job:
+      enabled: false
+
+  sql:
+    init:
+      mode: never
+
+batch:
+  chunk-size: 1000
+  total-records-count: 10000
