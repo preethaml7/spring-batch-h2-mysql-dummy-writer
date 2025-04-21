@@ -1,9 +1,9 @@
 package io.protopanda.config;
 
-import io.protopanda.model.Employee;
-import io.protopanda.processor.EmployeeProcessor;
+import io.protopanda.model.DataIngestionPayload;
+import io.protopanda.processor.CustomProcessor;
 import io.protopanda.reader.CustomReader;
-import io.protopanda.repository.EmployeeRepository;
+import io.protopanda.writer.CustomWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -14,7 +14,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,27 +27,18 @@ public class SpringBatchConfig {
     @Value("${batch.chunk-size:1000}")
     private Integer chunkSize;
 
-    private final EmployeeRepository employeeRepository;
+    private final CustomWriter itemWriter;
 
     @Bean
-    public ItemReader<Employee> itemReader() {
+    public ItemReader<DataIngestionPayload> itemReader() {
         return new CustomReader();
     }
 
     @Bean
-    public ItemProcessor<Employee, Employee> processor() {
-        return new EmployeeProcessor();
+    public ItemProcessor<DataIngestionPayload, DataIngestionPayload> processor() {
+        return new CustomProcessor();
     }
 
-
-    @Bean
-    public ItemWriter<Employee> writer(EmployeeRepository repository) {
-        return items -> {
-            repository.saveAll(items); // Batch saves all employees to the repository
-            // Optional: print each employee if you want to debug
-            items.forEach(item -> System.out.println(">>> Writing: " + item.toString()));
-        };
-    }
 
     @Bean
     public Job importUserJob(JobRepository jobRepository, Step step1) {
@@ -60,14 +50,12 @@ public class SpringBatchConfig {
 
     @Bean
     public Step step1(JobRepository jobRepository,
-                      PlatformTransactionManager transactionManager,
-                      ItemWriter<Employee> writer,
-                      ItemReader<Employee> reader) {
+                      PlatformTransactionManager transactionManager) {
         return new StepBuilder("step1", jobRepository)
-                .<Employee, Employee>chunk(chunkSize, transactionManager)
-                .reader(reader)
+                .<DataIngestionPayload, DataIngestionPayload>chunk(chunkSize, transactionManager)
+                .reader(itemReader())
                 .processor(processor())
-                .writer(writer)
+                .writer(itemWriter)
                 .build();
     }
 }

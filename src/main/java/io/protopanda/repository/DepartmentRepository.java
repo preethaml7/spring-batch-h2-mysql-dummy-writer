@@ -1,11 +1,10 @@
 package io.protopanda.repository;
 
-import io.protopanda.model.Employee;
+import io.protopanda.model.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-
+public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
 }

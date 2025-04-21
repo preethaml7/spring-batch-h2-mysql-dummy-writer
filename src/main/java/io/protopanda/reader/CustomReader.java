@@ -1,5 +1,7 @@
 package io.protopanda.reader;
 
+import io.protopanda.model.DataIngestionPayload;
+import io.protopanda.model.Department;
 import io.protopanda.model.Employee;
 import net.datafaker.Faker;
 import org.springframework.batch.item.ItemReader;
@@ -8,7 +10,7 @@ import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.beans.factory.annotation.Value;
 
-public class CustomReader implements ItemReader<Employee> {
+public class CustomReader implements ItemReader<DataIngestionPayload> {
 
     private final Faker faker = new Faker();
     private int recordCount = 0;
@@ -17,7 +19,7 @@ public class CustomReader implements ItemReader<Employee> {
     private Integer totalRecordCount;
 
     @Override
-    public Employee read() throws UnexpectedInputException, ParseException, NonTransientResourceException {
+    public DataIngestionPayload read() throws UnexpectedInputException, ParseException, NonTransientResourceException {
 
         if (recordCount >= totalRecordCount) {
             return null; // Return null to the signal end of reading
@@ -31,10 +33,21 @@ public class CustomReader implements ItemReader<Employee> {
 
         recordCount++;
 
-        return Employee.builder()
+        Employee employee = Employee.builder()
                 .firstName(firstName)
                 .lastName(lastName)
                 .cityName(cityName)
                 .build();
+
+        Department department = Department.builder()
+                .name(faker.company().industry())
+                .cityName(cityName)
+                .build();
+
+        return DataIngestionPayload.builder()
+                .employee(employee)
+                .department(department)
+                .build();
     }
+
 } 
