@@ -13,8 +13,8 @@ public class CustomProcessor implements ItemProcessor<DataIngestionPayload, Data
         // System.out.println("Processing item: " + item);
 
         return DataIngestionPayload.builder()
-                .employee(item.getEmployee())
-                .department(item.getDepartment())
+                .employeeList(item.getEmployeeList())
+                .departmentList(item.getDepartmentList())
                 .build();
     }
 }

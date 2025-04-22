@@ -3,12 +3,14 @@ package io.protopanda.model;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Builder
 @Getter
 public class DataIngestionPayload {
 
-    private Department department;
+    private List<Department> departmentList;
 
-    private Employee employee;
+    private List<Employee> employeeList;
 
 }

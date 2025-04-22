@@ -23,10 +23,10 @@ public class CustomWriter implements ItemWriter<DataIngestionPayload> {
 
         chunks.forEach(payload -> {
 
-            employeeRepository.save(payload.getEmployee());
-            departmentRepository.save(payload.getDepartment());
+            employeeRepository.saveAll(payload.getEmployeeList());
+            departmentRepository.saveAll(payload.getDepartmentList());
 
-            log.info(">>> Writing: {}", payload.getEmployee().toString());
+            // log.info(">>> Writing: {}", payload.getEmployeeList().toString());
 
         });
     }

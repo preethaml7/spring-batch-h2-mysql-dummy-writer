@@ -24,5 +24,7 @@ spring:
       mode: never
 
 batch:
-  chunk-size: 1000
-  total-records-count: 10000
+  chunk-size: 500
+  total-records-count: 100000
+  partition-count: 20
+
